@@ -402,7 +402,7 @@ compilation_prepare()
 
 		display_alert "Adding" "Wireless drivers for Xradio XR819 chipsets" "info"
 
-		fetch_from_repo "$GITHUB_SOURCE/karabek/xradio" "xradio" "branch:master" "yes"
+		fetch_from_repo "$GITHUB_SOURCE/fifteenhex/xradio" "xradio" "branch:master" "yes"
 		cd "$kerneldir" || exit
 		rm -rf "$kerneldir/drivers/net/wireless/xradio"
 		mkdir -p "$kerneldir/drivers/net/wireless/xradio/"
@@ -419,13 +419,10 @@ compilation_prepare()
 		"$kerneldir/drivers/net/wireless/xradio/Kconfig"
 
 		# Add to section Makefile
-		echo "obj-\$(CONFIG_WLAN_VENDOR_XRADIO) += xradio/" \
+		echo "obj-\$(CONFIG_XRADIO) += xradio/" \
 		>> "$kerneldir/drivers/net/wireless/Makefile"
 		sed -i '/source "drivers\/net\/wireless\/ti\/Kconfig"/a source "drivers\/net\/wireless\/xradio\/Kconfig"' \
 		"$kerneldir/drivers/net/wireless/Kconfig"
-
-		# add support for K5.13+
-                process_patch_file "${SRC}/patch/misc/wireless-xradio-5.13.patch" "applying"
 
 	fi
 
