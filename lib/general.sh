@@ -253,10 +253,29 @@ create_sources_list()
 	# replace local package server if defined. Suitable for development
 	[[ -n $LOCAL_MIRROR ]] && echo "deb ${SIGNED_BY}http://$LOCAL_MIRROR $RELEASE main ${RELEASE}-utils ${RELEASE}-desktop" > "${basedir}"/etc/apt/sources.list.d/armbian.list
 
+#### smlinux repo #######
+	display_alert "Adding smlinux armbian repository and authentication key" "/etc/apt/sources.list.d/smlinux.list" "info"
+
+	# apt-key add is getting deprecated
+	APT_VERSION=$(chroot "${basedir}" /bin/bash -c "apt --version | cut -d\" \" -f2")
+	if linux-version compare "${APT_VERSION}" ge 2.4.1; then
+		# add smlinux key
+		gpg --dearmor < "${SRC}"/config/smlinux.key > "${basedir}"/usr/share/keyrings/smlinux.gpg
+		SIGNED_BY="[signed-by=/usr/share/keyrings/smlinux.gpg] "
+	else
+		# use old method for compatibility reasons
+		cp "${SRC}"/config/smlinux.key "${basedir}"
+		chroot "${basedir}" /bin/bash -c "cat smlinux.key | apt-key add - > /dev/null 2>&1"
+	fi
+
+	echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+#### smlinux repo #######
+
 	# disable repo if SKIP_ARMBIAN_REPO=yes
 	if [[ "${SKIP_ARMBIAN_REPO}" == "yes" ]]; then
-		display_alert "Disabling armbian repo" "${ARCH}-${RELEASE}" "wrn"
+		display_alert "Disabling armbian/smlinux repos" "${ARCH}-${RELEASE}" "wrn"
 		mv "${SDCARD}"/etc/apt/sources.list.d/armbian.list "${SDCARD}"/etc/apt/sources.list.d/armbian.list.disabled
+		mv "${SDCARD}"/etc/apt/sources.list.d/smlinux.list "${SDCARD}"/etc/apt/sources.list.d/smlinux.list.disabled
 	fi
 
 }
