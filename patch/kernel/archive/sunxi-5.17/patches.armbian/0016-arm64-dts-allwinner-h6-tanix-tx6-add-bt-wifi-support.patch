@@ -1,0 +1,63 @@
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix.dtsi
+@@ -76,12 +76,38 @@
+ 		compatible = "linux,spdif-dit";
+ 	};
+ 
++	reg_vcc_wifi_io: vcc-wifi-io {
++		/* Always on 1.8V/300mA regulator for WiFi and BT IO */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-wifi-io";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++		vin-supply = <&reg_vcc3v3>;
++	};
++
+ 	wifi_pwrseq: wifi-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		clocks = <&rtc 1>;
+ 		clock-names = "ext_clock";
+ 		reset-gpios = <&r_pio 1 3 GPIO_ACTIVE_LOW>; /* PM3 */
+ 	};
++
++	rtl8822cs: sdio-wifi@1 {
++		reg = <1>;
++		interrupt-parent = <&r_pio>;
++		interrupts = <1 0 IRQ_TYPE_LEVEL_LOW>; /* PM0 */
++		interrupt-names = "host-wake";
++	};
++
++	xr819: sdio_wifi@1 {
++		reg = <1>;
++		compatible = "xradio,xr819";
++		interrupt-parent = <&r_pio>;
++		local-mac-address = [dc 44 6d c0 ff ee];
++		interrupts = <1 0 IRQ_TYPE_EDGE_RISING>;	/* PM0 */
++		interrupt-names = "host-wake";
++	};
+ };
+ 
+ &cpu0 {
+@@ -175,6 +201,21 @@
+ 	status = "okay";
+ };
+ 
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		//use 8822cs compatible to load hci_h5 and btrtl driver
++		compatible = "realtek,rtl8822cs-bt";
++		device-wake-gpios = <&r_pio 1 2 GPIO_ACTIVE_HIGH>; /* PM2 */
++		host-wake-gpios = <&r_pio 1 1 GPIO_ACTIVE_HIGH>; /* PM1 */
++		enable-gpios = <&r_pio 1 4 GPIO_ACTIVE_HIGH>; /* PM4 */
++	};
++};
++
+ &usb2otg {
+ 	dr_mode = "host";
+ 	status = "okay";
