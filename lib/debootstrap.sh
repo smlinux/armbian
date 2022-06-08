@@ -251,12 +251,14 @@ create_rootfs_cache()
 		chmod 755 $SDCARD/sbin/start-stop-daemon
 
 		# stage: configure language and locales
-		display_alert "Configuring locales" "$DEST_LANG" "info"
-
-		[[ -f $SDCARD/etc/locale.gen ]] && sed -i "s/^# $DEST_LANG/$DEST_LANG/" $SDCARD/etc/locale.gen
-		eval 'LC_ALL=C LANG=C chroot $SDCARD /bin/bash -c "locale-gen $DEST_LANG"' ${OUTPUT_VERYSILENT:+' >/dev/null 2>/dev/null'}
-		eval 'LC_ALL=C LANG=C chroot $SDCARD /bin/bash -c "update-locale LANG=$DEST_LANG LANGUAGE=$DEST_LANG LC_MESSAGES=$DEST_LANG"' \
-			${OUTPUT_VERYSILENT:+' >/dev/null 2>/dev/null'}
+		display_alert "Generatining default locale" "info"
+		if [[ -f $SDCARD/etc/locale.gen ]]; then
+			sed -i '/ C.UTF-8/s/^# //g' $SDCARD/etc/locale.gen
+			sed -i '/en_US.UTF-8/s/^# //g' $SDCARD/etc/locale.gen
+		fi
+		eval 'LC_ALL=C LANG=C chroot $SDCARD /bin/bash -c "locale-gen"' ${OUTPUT_VERYSILENT:+' >/dev/null 2>&1'}
+		eval 'LC_ALL=C LANG=C chroot $SDCARD /bin/bash -c "update-locale --reset LANG=en_US.UTF-8"' \
+			${OUTPUT_VERYSILENT:+' >/dev/null 2>&1'}
 
 		if [[ -f $SDCARD/etc/default/console-setup ]]; then
 			sed -e 's/CHARMAP=.*/CHARMAP="UTF-8"/' -e 's/FONTSIZE=.*/FONTSIZE="8x16"/' \
@@ -634,7 +636,7 @@ PREPARE_IMAGE_SIZE
 
 	check_loop_device "$LOOP"
 
-	losetup $LOOP ${SDCARD}.raw
+	losetup -P $LOOP ${SDCARD}.raw
 
 	# loop device was grabbed here, unlock
 	flock -u $FD
@@ -736,7 +738,7 @@ PREPARE_IMAGE_SIZE
 	fi
 
 	# recompile .cmd to .scr if boot.cmd exists
-    
+
 	if [[ -f $SDCARD/boot/boot.cmd ]]; then
 		if [ -z $BOOTSCRIPT_OUTPUT ]; then BOOTSCRIPT_OUTPUT=boot.scr; fi
 		mkimage -C none -A arm -T script -d $SDCARD/boot/boot.cmd $SDCARD/boot/$BOOTSCRIPT_OUTPUT > /dev/null 2>&1
