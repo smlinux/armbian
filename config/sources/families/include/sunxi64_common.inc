@@ -17,7 +17,7 @@ case $BRANCH in
 		;;
 
 	current)
-		KERNEL_VERSION_LEVEL="5.17"
+		KERNEL_VERSION_LEVEL="5.18"
 		#KERNELSWITCHOBJ="tag=v5.17.13"
 		;;
 
