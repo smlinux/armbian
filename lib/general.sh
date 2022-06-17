@@ -268,7 +268,29 @@ create_sources_list()
 		chroot "${basedir}" /bin/bash -c "cat smlinux.key | apt-key add - > /dev/null 2>&1"
 	fi
 
-	echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+	if [[ $BRANCH == "current" ]]; then
+		case $release in
+			bullseye)
+				echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo/debian $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+			;;
+
+			jammy)
+				echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo/ubuntu $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+			;;
+		esac
+	fi
+
+	if [[ $BRANCH == "edge" ]]; then
+		case $release in
+			bullseye)
+				echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo/debian-edge $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+			;;
+
+			jammy)
+				echo "deb ${SIGNED_BY}https://smlinux.github.io/armbian-repo/ubuntu-edge $RELEASE main" > "${basedir}"/etc/apt/sources.list.d/smlinux.list
+			;;
+		esac
+	fi
 #### smlinux repo #######
 
 	# disable repo if SKIP_ARMBIAN_REPO=yes
