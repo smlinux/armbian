@@ -1,0 +1,17 @@
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix.dtsi	2022-06-11 09:08:43.799110483 +0200
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-tanix.dtsi	2022-06-11 09:17:39.113237235 +0200
+@@ -176,6 +176,14 @@
+ 		interrupts = <1 0 IRQ_TYPE_LEVEL_LOW>; /* PM0 */
+ 		interrupt-names = "host-wake";
+ 	};
++
++	xr819: sdio_wifi@1 {
++		reg = <1>;
++		compatible = "xradio,xr819";
++		interrupt-parent = <&r_pio>;
++		interrupts = <1 0 IRQ_TYPE_EDGE_RISING>;	/* PM0 */
++		interrupt-names = "host-wake";
++	};
+ };
+ 
+ &mmc2 {
