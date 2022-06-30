@@ -157,6 +157,7 @@ libxtst6
 libxxf86dga1
 libyelp0
 lightdm
+lightdm-settings
 mutter
 mutter-common
 nautilus
