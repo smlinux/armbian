@@ -2,3 +2,4 @@ verbosity=1
 bootlogo=false
 console=both
 disp_mode=1920x1080p60
+extraargs=systemd.unified_cgroup_hierarchy=0
