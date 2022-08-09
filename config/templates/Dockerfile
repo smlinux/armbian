@@ -114,6 +114,7 @@ RUN apt-get update \
        xfsprogs \
        xxd \
        zip \
+       zstd \
        zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 RUN locale-gen en_US.UTF-8
