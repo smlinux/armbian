@@ -12,7 +12,7 @@ LINUXFAMILY=sunxi64
 case $BRANCH in
 
 	current)
-		KERNEL_VERSION_LEVEL="5.18"
+		KERNEL_VERSION_LEVEL="5.19"
 		;;
 
 	edge)
@@ -29,9 +29,9 @@ case "$BRANCH" in
 	;;
 
 	edge)
-		KERNELSOURCE=$MAINLINE_KERNEL_SOURCE
-		KERNELSOURCENAME='name=origin'
-		KERNELBRANCH="branch:master"
+                KERNELSOURCE=$MAINLINE_KERNEL_SOURCE
+                KERNELSOURCENAME='name=origin'
+                KERNELBRANCH="branch:linux-${KERNEL_VERSION_LEVEL}.y"
 	;;
 esac
 
