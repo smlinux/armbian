@@ -29,9 +29,9 @@ case "$BRANCH" in
 	;;
 
 	edge)
-                KERNELSOURCE=$MAINLINE_KERNEL_SOURCE
-                KERNELSOURCENAME='name=origin'
-                KERNELBRANCH="branch:linux-${KERNEL_VERSION_LEVEL}.y"
+		KERNELSOURCE=$MAINLINE_KERNEL_SOURCE
+		KERNELSOURCENAME='name=origin'
+		KERNELBRANCH="branch:linux-${KERNEL_VERSION_LEVEL}.y"
 	;;
 esac
 
